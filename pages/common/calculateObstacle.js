@@ -169,7 +169,8 @@ function obstacle(linePath) {
 // 判断周围是否有可逃点
 function nextPathPoint(nextPoint){
     // 如果是可逃点
-
+var circleColorList = app.globalData.circleColorList
+var isObstacle = circleColorList[nextPoint]
     // 判断此可逃点是否有逃脱路径
 }
 // 判断周围的点是否具有逃脱路径
