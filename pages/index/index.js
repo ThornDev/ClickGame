@@ -2,7 +2,7 @@
 //获取应用实例
 var points = require('../common/points')
 var judgeWall = require('../common/judgeWall')
-var calculateObs = require('../common/calculateObstacle')
+var calculatePath = require('../common/calculatePath')
 var app = getApp()
 Page({
   // 这里声明的是类的全局变量
@@ -50,7 +50,7 @@ Page({
       }
 
       // 判断逃脱路径
-      var path = calculateObs.calculatePath(blackIndex);
+      var path = calculatePath.calculatePath(blackIndex,true);
       // 如果已经没路走了 则成功围困
       if (path.length == 0) {
         var tstep = this.data.steps;
@@ -85,6 +85,8 @@ Page({
     var that = this;
     var leftCircle = 7.5;
     var topCircle = 7.5;
+    var numPerLine = 11;
+    var numPerVertical = 11;
     var circleList = [];
     var circleMap = {};
     var circleColorList = [];
@@ -98,8 +100,8 @@ Page({
       })
     })
     // 计算每个圆点的top和left
-    for (var i = 0; i < 11; i++) {
-      for (var j = 0; j < 11; j++) {
+    for (var i = 0; i < numPerLine; i++) {
+      for (var j = 0; j < numPerVertical; j++) {
         if ((i + 1) % 2 == 0) {
           if (j != 0) {
             leftCircle = (50 + 8) * j + 36;
@@ -112,7 +114,7 @@ Page({
         topCircle = 50 * i + 8 * (i + 1);
         circleColorList.push(false);
         circleBlackList.push(false);
-        circleList.push({ topCircle: topCircle, leftCircle: leftCircle });
+        circleList.push({ topCircle: topCircle, leftCircle: leftCircle});
       }
     }
     // 注入黑色圆点初始位置随机点位
@@ -135,3 +137,8 @@ Page({
     })
   }
 })
+
+
+module.exports = {
+
+}

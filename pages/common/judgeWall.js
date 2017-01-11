@@ -1,4 +1,5 @@
-var points = require('points');
+var points = require('points')
+var clearToBegin = require("clearToBegin")
 function judgeIfWall(currentPoint, isWalker) {
     var wall = points.wallPoints;
     for (var index in wall) {
@@ -10,7 +11,7 @@ function judgeIfWall(currentPoint, isWalker) {
                     showCancel: false,
                     success: function (res) {
                         if (res.confirm) {
-
+                            clearToBegin.clearToBegin
                         }
                     }
                 })

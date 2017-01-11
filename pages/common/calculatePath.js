@@ -1,7 +1,9 @@
-var points = require('points');
-var judgeWall = require('judgeWall');
+var points = require('points')
+var judgeWall = require('judgeWall')
+var judgeIfObstacle = require('judgeObstacle')
+var clearToBegin = require("clearToBegin")
 var app = getApp()
-function calculatePath(currentIndex) {
+function calculatePath(currentIndex, atCurrentPoint) {
     var wallPoints = points.wallPoints;
     var leftLinePath = [];          // 左边路径
     var leftTopLinePath = [];       // 左上路径
@@ -31,10 +33,10 @@ function calculatePath(currentIndex) {
         rightLinePath.push(currentIndex + i);
     }
     // 判断奇数行还是偶数行
-    var leftTopFirstDesNum = 0;
-    var rightTopFirstDesNum = 0;
-    var rightBottomFirstDesNum = 0;
-    var leftBottomFirstDesNum = 0;
+    var leftTopFirstDesNum = 0;     // 左上第一个规律差值
+    var rightTopFirstDesNum = 0;    // 右上第一个规律差值
+    var rightBottomFirstDesNum = 0; // 右下第一个规律差值
+    var leftBottomFirstDesNum = 0;  // 左下第一个规律差值
     if (line % 2 == 0) {
         leftTopFirstDesNum = 11;
         rightTopFirstDesNum = 10;
@@ -124,33 +126,33 @@ function calculatePath(currentIndex) {
         returnList = leftBottomLinePath;
         returnLength = leftBottomLength;
     }
-    if (returnList.length == 0) {
-        wx.showModal({
-            title: "恭喜你！",
-            content: "已将黑暗势力成功擒获！",
-            showCancel: false,
-            success: function (res) {
-                if (res.confirm) {
-
+    if (atCurrentPoint) {
+        if (returnList.length == 0) {
+            var randomNextPathArray = []
+            wx.showModal({
+                title: "恭喜你！",
+                content: "已将黑暗势力成功擒获！",
+                showCancel: false,
+                success: function (res) {
+                    if (res.confirm) {
+                        clearToBegin.clearToBegin
+                    }
                 }
-            }
-        })
+            })
+        }
     }
+
     return returnList;
 }
 // 逃脱路径障碍判断
 function obstacle(linePath) {
-    var circleColorList = app.globalData.circleColorList
-    // console.log("judge "+circleColorList)
+
     var obstacleNum = 0
     var lineLength = linePath.length
     for (var i = 0; i < lineLength; i++) {
         var linePoint = linePath[i];
-        var isObstacle = circleColorList[linePoint];
+        var isObstacle = judgeIfObstacle.judgeIfObstacle(linePoint)
         if (i == 0 && isObstacle) {
-            return false
-        }
-        if (i == 1 && isObstacle) {
             return false
         }
         if (i == lineLength - 1 && isObstacle) {
@@ -161,31 +163,12 @@ function obstacle(linePath) {
         }
     }
     if (obstacleNum >= 1) {
-        return true
+        return false
     }
     return true
 }
 
-// 判断周围是否有可逃点
-function nextPathPoint(nextPoint){
-    // 如果是可逃点
-var circleColorList = app.globalData.circleColorList
-var isObstacle = circleColorList[nextPoint]
-    // 判断此可逃点是否有逃脱路径
-}
-// 判断周围的点是否具有逃脱路径
-function expandPath(nextPoint) {
 
-    var escapePath = this.calculatePath(nextPoint);
-    var path = []
-    path.push(nextPoint)
-
-    if (escapePath.length == 0) {
-        return []
-    }
-    path.concat(escapePath)
-    return path
-}
 module.exports = {
     calculatePath: calculatePath,
     obstacle: obstacle,
