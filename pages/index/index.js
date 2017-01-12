@@ -14,8 +14,11 @@ Page({
     colorCircleSecond: '#FE4D32', // 圆点颜色2
     colorCircleBlack: '#000000',  // 圆点颜色黑色
     isRunning: false,             // 是否正在进行
-    blackCircleIndex: 0,           // 黑色圆点
+    blackCircleIndex: 60,           // 黑色圆点
     steps: 0,                      // 点击步数
+    modalOut: true,                // 提示框初始状态
+    modalTitle: "",                // 提示标题
+    modalMessage: "",              // 提示信息
   },
   //事件处理函数
   bindViewTap: function () {
@@ -45,12 +48,15 @@ Page({
         this.setData({
           circleColorList: tpCircleColorList,
           steps: tstep,
+          modalOut: false,
+          modalTitle: "很抱歉！",
+          modalMessage: "黑色势力已逃出包围圈！",
         });
         return;
       }
 
       // 判断逃脱路径
-      var path = calculatePath.calculatePath(blackIndex,true);
+      var path = calculatePath.calculatePath(blackIndex, true);
       // 如果已经没路走了 则成功围困
       if (path.length == 0) {
         var tstep = this.data.steps;
@@ -61,7 +67,6 @@ Page({
         });
         return
       }
-      console.log(path);
       // 有路的话则将 原来黑点还原 继续逃出路径的下一点
       tpBlackCircleList[blackIndex] = false;
       blackIndex = path[0];
@@ -78,6 +83,24 @@ Page({
         steps: tstep,
       });
     }
+  },
+  // 逃出成功点击事件
+  modalOutAction: function (e) {
+    var tpBlackCircleList = this.data.circleBlackList;
+    var tpCircleColorLists = app.globalData.circleColorList
+    for (var i = 0; i < tpCircleColorLists.length; i++) {
+      tpCircleColorLists[i] = false
+    }
+    app.globalData.circleColorList = tpCircleColorLists
+    tpBlackCircleList[this.data.blackCircleIndex] = false
+    tpBlackCircleList[60] = true
+    this.setData({
+        circleColorList: tpCircleColorLists,
+        modalOut: true,
+        steps: 0,
+        blackCircleIndex: 60,
+        circleBlackList:tpBlackCircleList,
+      });
   },
 
   onLoad: function () {
@@ -114,7 +137,7 @@ Page({
         topCircle = 50 * i + 8 * (i + 1);
         circleColorList.push(false);
         circleBlackList.push(false);
-        circleList.push({ topCircle: topCircle, leftCircle: leftCircle});
+        circleList.push({ topCircle: topCircle, leftCircle: leftCircle });
       }
     }
     // 注入黑色圆点初始位置随机点位
@@ -135,9 +158,9 @@ Page({
       circleBlackList: circleBlackList,
       blackCircleIndex: randomCircleIndex,
     })
-  }
-})
+  },
 
+})
 
 module.exports = {
 

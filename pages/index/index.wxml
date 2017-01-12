@@ -1,20 +1,21 @@
+
 <!--index.wxml-->
 <view class="container">
-  <!--<view  bindtap="bindViewTap" class="userinfo">-->
+
   <!-- -->
-    <image class="userinfo-avatar" src="{{cuserInfo.avatarUrl}}"></image>
-    <text class="userinfo-nickname">{{cuserInfo.nickName}}</text>
-  <!--</view>-->
+  <image class="userinfo-avatar" src="{{cuserInfo.avatarUrl}}"></image>
+  <text class="userinfo-nickname">{{cuserInfo.nickName}}</text>
   <text class="steps">步数：{{steps}}</text>
+  <modal class="modal" hidden="{{modalOut}}" no-cancel bindconfirm="modalOutAction" bindcancel="modalOutAction">
+    <view> {{modalTitle}} </view>
+    <view> {{modalMessage}} </view>
+  </modal>
 </view>
 
 <!--index 为circleList的索引-->
 <view class="container-out">
-  <view class="circle" bindtap="tapCircle" wx:for="{{circleList}}" wx:key="key" id="{{index}}"
- style="top:{{item.topCircle}}rpx;left:{{item.leftCircle}}rpx;background-color:{{circleColorList[index]?colorCircleSecond:colorCircleFirst}};" >
+  <view class="circle" bindtap="tapCircle" wx:for="{{circleList}}" wx:key="key" id="{{index}}" style="top:{{item.topCircle}}rpx;left:{{item.leftCircle}}rpx;background-color:{{circleColorList[index]?colorCircleSecond:colorCircleFirst}};">
   </view>
-  <view class="circle"  wx:for="{{circleList}}" wx:key="key" id="{{index}}" wx:if="{{circleBlackList[index]}}"
-  style="top:{{item.topCircle}}rpx;left:{{item.leftCircle}}rpx;background-color:{{colorCircleBlack}};" >
+  <view class="circle" wx:for="{{circleList}}" wx:key="key" id="{{index}}" wx:if="{{circleBlackList[index]}}" style="top:{{item.topCircle}}rpx;left:{{item.leftCircle}}rpx;background-color:{{colorCircleBlack}};">
   </view>
 </view>
-

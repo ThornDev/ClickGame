@@ -1,7 +1,6 @@
 var points = require('points')
 var judgeWall = require('judgeWall')
 var judgeIfObstacle = require('judgeObstacle')
-var clearToBegin = require("clearToBegin")
 var app = getApp()
 function calculatePath(currentIndex, atCurrentPoint) {
     var wallPoints = points.wallPoints;
@@ -129,16 +128,48 @@ function calculatePath(currentIndex, atCurrentPoint) {
     if (atCurrentPoint) {
         if (returnList.length == 0) {
             var randomNextPathArray = []
-            wx.showModal({
-                title: "恭喜你！",
-                content: "已将黑暗势力成功擒获！",
-                showCancel: false,
-                success: function (res) {
-                    if (res.confirm) {
-                        clearToBegin.clearToBegin
+            var preNLeftPath = this.predictPath(leftLinePath)
+            if (preNLeftPath.length) {
+                randomNextPathArray.push(preNLeftPath)
+            }
+            var preNLeftTopPath = this.predictPath(leftTopLinePath)
+            if (preNLeftTopPath.length) {
+                randomNextPathArray.push(preNLeftTopPath)
+            }
+            var preNRightTopPath = this.predictPath(rightTopLinePath)
+            if (preNRightTopPath.length) {
+                randomNextPathArray.push(preNRightTopPath)
+            }
+            var preNRightPath = this.predictPath(rightLinePath)
+            if (preNRightPath.length) {
+                randomNextPathArray.push(preNRightPath)
+            }
+            var preNRightBottomPath = this.predictPath(rightBottomLinePath)
+            if (preNRightTopPath.length) {
+                randomNextPathArray.push(preNRightBottomPath)
+            }
+            var preNLeftBottomPath = this.predictPath(leftBottomLinePath)
+            if (preNLeftBottomPath.length) {
+                randomNextPathArray.push(preNLeftBottomPath)
+            }
+            var nextPathLength = randomNextPathArray.length
+            if (nextPathLength == 0) {
+                wx.showModal({
+                    title: "恭喜你！",
+                    content: "已将黑暗势力成功擒获！",
+                    showCancel: false,
+                    success: function (res) {
+                        if (res.confirm) {
+
+                        }
                     }
-                }
-            })
+                })
+            } else {
+                var randomIndex = parseInt((nextPathLength - 1) * Math.random())
+                returnList = randomNextPathArray[randomIndex]
+            }
+
+
         }
     }
 
@@ -168,8 +199,39 @@ function obstacle(linePath) {
     return true
 }
 
+// 判断周围是否有可逃点
+function predictPath(path) {
+    // 如果是可逃点
+    var nextPoint = path[0]
+    var circleColorList = app.globalData.circleColorList
+    var isObstacle = circleColorList[nextPoint]
+    // 判断此可逃点是否有逃脱路径
+    console.log(" obstacle " + isObstacle + "next point " + nextPoint)
+    var predicatePath = [];
+    if (!isObstacle) {
+        predicatePath = this.expandPath(nextPoint)
+    }
+    console.log("predict"+predicatePath)
+    return predicatePath;
+}
+// 判断周围的点是否具有逃脱路径
+function expandPath(nextPoint) {
+
+    var escapePath = this.calculatePath(nextPoint, false);
+    var path = []
+    path.push(nextPoint)
+
+    if (escapePath.length == 0) {
+        return []
+    }
+    path.concat(escapePath)
+    console.log("escape path " + path +"  " + escapePath)
+    return path
+}
 
 module.exports = {
     calculatePath: calculatePath,
     obstacle: obstacle,
+    predictPath: predictPath,
+    expandPath: expandPath,
 }
